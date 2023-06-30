@@ -1,52 +1,52 @@
 plot_visnet <-
-function(sg,df_matrix,main_text="Integrative network",Xname="X",Yname="Y",Zname=NA,Wname=NA,communitymembership=NA,footer=NA,id_mapping_mat=NA,html.selfcontained = TRUE,max.connections.interactive=100,seednum=100,layoutmatrix=NA){
+  function(sg,df_matrix,main_text="Integrative network",Xname="X",Yname="Y",Zname=NA,Wname=NA,communitymembership=NA,footer=NA,id_mapping_mat=NA,html.selfcontained = TRUE,max.connections.interactive=100,seednum=100,layoutmatrix=NA){
     
     save(id_mapping_mat,file="id.Rda")
     
-  
-    if(is.na(communitymembership)==TRUE){
-        #vis.nodes$color <- V(sg)$color
-        
-        node_attr_matrix<-cbind(V(sg)$name,V(sg)$shape,V(sg)$color,V(sg)$label.cex,V(sg)$vertex.size)
-        
+    
+    if(identical(communitymembership, NA)==TRUE){
+      #vis.nodes$color <- V(sg)$color
+      
+      node_attr_matrix<-cbind(V(sg)$name,V(sg)$shape,V(sg)$color,V(sg)$label.cex,V(sg)$vertex.size)
+      
     }else{
-        
-        
-        node_attr_matrix<-cbind(V(sg)$name,V(sg)$shape,sg$palette[communitymembership],V(sg)$label.cex,V(sg)$vertex.size)
-        
+      
+      
+      node_attr_matrix<-cbind(V(sg)$name,V(sg)$shape,sg$palette[communitymembership],V(sg)$label.cex,V(sg)$vertex.size)
+      
     }
-
+    
     
     node_attr_matrix<-as.data.frame(node_attr_matrix)
     colnames(node_attr_matrix)<-c("name","shape","color","label.cex","vertex.size")
     
     nrow_df_matrix<-nrow(df_matrix)
-
-    if(FALSE){
-            if(nrow(df_matrix)>100){
-                
-               
-                corweight_temp<-abs(df_matrix[,3])
-                ind_top_2000<-order(corweight_temp,decreasing=TRUE)[1:max.connections.interactive]
-                # print(paste("Only ",max_connections," connections ranked by strength of association will be plotted.",sep=""))
-                
-                e=df_matrix[ind_top_2000,c(1:2),drop=FALSE]
-                
-         
-                e <- apply(e, 1, paste, collapse=" --")
-                
-                df_matrix<-df_matrix[ind_top_2000,,drop=FALSE]
-                node_names_top2000<-unique(c(as.character(df_matrix$from),as.character(df_matrix$to)))
-                
-                # sg <- subgraph(sg,v=unique(c(as.character(df_matrix$from),as.character(df_matrix$to))))
-                sg<-graph.data.frame(d = df_matrix, directed = FALSE) #induced.subgraph(sg,which(V(sg)$name %in% c(node_names_top2000)))
-                #sg<-subgraph.edges(sg,eids=factor(e))
-               
-            }
     
+    if(FALSE){
+      if(nrow(df_matrix)>100){
+        
+        
+        corweight_temp<-abs(df_matrix[,3])
+        ind_top_2000<-order(corweight_temp,decreasing=TRUE)[1:max.connections.interactive]
+        # print(paste("Only ",max_connections," connections ranked by strength of association will be plotted.",sep=""))
+        
+        e=df_matrix[ind_top_2000,c(1:2),drop=FALSE]
+        
+        
+        e <- apply(e, 1, paste, collapse=" --")
+        
+        df_matrix<-df_matrix[ind_top_2000,,drop=FALSE]
+        node_names_top2000<-unique(c(as.character(df_matrix$from),as.character(df_matrix$to)))
+        
+        # sg <- subgraph(sg,v=unique(c(as.character(df_matrix$from),as.character(df_matrix$to))))
+        sg<-graph.data.frame(d = df_matrix, directed = FALSE) #induced.subgraph(sg,which(V(sg)$name %in% c(node_names_top2000)))
+        #sg<-subgraph.edges(sg,eids=factor(e))
+        
+      }
+      
     }
-
-
+    
+    
     
     #graph.data.frame(d = df_matrix, directed = FALSE)
     
@@ -55,8 +55,8 @@ function(sg,df_matrix,main_text="Integrative network",Xname="X",Yname="Y",Zname=
     node_vec<-cbind(node_vec,graphindnum)
     node_vec<-as.data.frame(node_vec)
     colnames(node_vec)=c("id","graphindnum")
-        
-
+    
+    
     
     id_mapping_mat<-id_mapping_mat[which(id_mapping_mat$Node%in%node_vec[,1]),]
     
@@ -67,18 +67,18 @@ function(sg,df_matrix,main_text="Integrative network",Xname="X",Yname="Y",Zname=
     
     node_type<-gsub(as.character(node_vec[,1]),pattern="[0-9]*",replacement="")
     
-    if(is.na(communitymembership)==FALSE){
-        node_vec<-cbind(node_vec,node_type)
-        node_vec<-as.data.frame(node_vec)
-        
-        colnames(node_vec)<-c("id","Community", "Name","type")
-    
+    if(identical(communitymembership, NA)==FALSE){
+      node_vec<-cbind(node_vec,node_type)
+      node_vec<-as.data.frame(node_vec)
+      
+      colnames(node_vec)<-c("id","Community", "Name","type")
+      
     }else{
-        node_vec<-cbind(node_vec,node_type)
-        node_vec<-as.data.frame(node_vec)
-        
-        colnames(node_vec)<-c("id", "Name","type")
-        
+      node_vec<-cbind(node_vec,node_type)
+      node_vec<-as.data.frame(node_vec)
+      
+      colnames(node_vec)<-c("id", "Name","type")
+      
     }
     
     
@@ -88,30 +88,30 @@ function(sg,df_matrix,main_text="Integrative network",Xname="X",Yname="Y",Zname=
     node_name[which(node_vec$type=="Y")]<-Yname
     
     if(is.na(Zname)==FALSE){
-        
-        node_name[which(node_vec$type=="Z")]<-Zname
+      
+      node_name[which(node_vec$type=="Z")]<-Zname
     }
     if(is.na(Wname)==FALSE){
-        node_name[which(node_vec$type=="W")]<-Wname
+      node_name[which(node_vec$type=="W")]<-Wname
     }
     
-   
+    
     
     vis.nodes<-node_vec #[,c("id","type")]
-    if(is.na(communitymembership)==FALSE){
-        vis.nodes$title<-paste("Name: ",node_vec$Name, "<br> Community: ",node_vec$Community,sep="") #paste('<a target="_blank" href="" onclick="return false;" style="background-color:white">',paste("Name: ",node_vec$Name, "<br> Community: ",node_vec$Community,sep=""),'</a>',sep="")
+    if(identical(communitymembership, NA)==FALSE){
+      vis.nodes$title<-paste("Name: ",node_vec$Name, "<br> Community: ",node_vec$Community,sep="") #paste('<a target="_blank" href="" onclick="return false;" style="background-color:white">',paste("Name: ",node_vec$Name, "<br> Community: ",node_vec$Community,sep=""),'</a>',sep="")
     }else{
-        vis.nodes$title<-paste("Name: ",node_vec$Name,sep="") #paste('<a target="_blank" href="" onclick="return false;" style="background-color:white">',paste("Name: ",node_vec$Name,sep=""),'</a>',sep="")
+      vis.nodes$title<-paste("Name: ",node_vec$Name,sep="") #paste('<a target="_blank" href="" onclick="return false;" style="background-color:white">',paste("Name: ",node_vec$Name,sep=""),'</a>',sep="")
     }
     
-     
+    
     node_attr_matrix_sel<-merge(node_attr_matrix,node_vec,by.x="name",by.y="id")
-      
-     
+    
+    
     
     vis.nodes$shape<-V(sg)$shape
     
-   
+    
     
     vis.nodes$label<-V(sg)$name
     vis.nodes$label.cex<-V(sg)$label.cex
@@ -119,14 +119,14 @@ function(sg,df_matrix,main_text="Integrative network",Xname="X",Yname="Y",Zname=
     vis.nodes$borderWidth <- 0.5
     vis.nodes$color.border <- "black"
     
-      
-	
-    if(is.na(communitymembership)==TRUE){
-        vis.nodes$color <- V(sg)$color
     
+    
+    if(identical(communitymembership, NA)==TRUE){
+      vis.nodes$color <- V(sg)$color
+      
     }else{
-        vis.nodes$color<-V(sg)$color #sg$palette[communitymembership]
-        
+      vis.nodes$color<-V(sg)$color #sg$palette[communitymembership]
+      
     }
     
     
@@ -147,50 +147,50 @@ function(sg,df_matrix,main_text="Integrative network",Xname="X",Yname="Y",Zname=
     add_shape("triangle",plot=mytriangle) #, clip=shapes("circle")$clip,plot=mytriangle)
     # no clipping, edges will be below the vertices anyway
     add_shape("star", clip=shape_noclip,plot=mystar, parameters=list(vertex.norays=5))
-
-	
+    
+    
     
     
     visnet<-visNetwork(nodes=vis.nodes,edges=vis.links,main=main_text,width=net.width, height=net.height)
     
-       
     
     
-    if(is.na(communitymembership)==FALSE){
-        
-        # passing custom nodes and/or edges
-       
-        lnodes <- data.frame(label =paste(unique(node_vec$type),unique(node_name),sep=""),
-        shape = unique(vis.nodes$shape), color = rep("grey",length(unique(node_name))),size=rep(8,length(unique(vis.nodes$shape))),shape.size = rep(50, length(unique(node_name))),font.align="top",font.size=15)
+    
+    if(identical(communitymembership, NA)==FALSE){
       
-        ledges1 <- data.frame(color = c("blue","red"),label = c("-ve correlation", "+ve correlation"), arrows =c("NULL", "NULL"),font.align = "top",size=10,font.size=15,border.bottom=30)
-        
-        ledges2 <- data.frame(color =unique(vis.nodes$color),label = paste("Community",seq(1,length(unique(vis.nodes$color))),sep=""), arrows =rep("NULL", length(unique(vis.nodes$color))),font.align = "top",size=10,font.size=15,border.bottom=30)
-        
-        ledges<-rbind(ledges1,ledges2)
-        
+      # passing custom nodes and/or edges
       
-
+      lnodes <- data.frame(label =paste(unique(node_vec$type),unique(node_name),sep=""),
+                           shape = unique(vis.nodes$shape), color = rep("grey",length(unique(node_name))),size=rep(8,length(unique(vis.nodes$shape))),shape.size = rep(50, length(unique(node_name))),font.align="top",font.size=15)
+      
+      ledges1 <- data.frame(color = c("blue","red"),label = c("-ve correlation", "+ve correlation"), arrows =c("NULL", "NULL"),font.align = "top",size=10,font.size=15,border.bottom=30)
+      
+      ledges2 <- data.frame(color =unique(vis.nodes$color),label = paste("Community",seq(1,length(unique(vis.nodes$color))),sep=""), arrows =rep("NULL", length(unique(vis.nodes$color))),font.align = "top",size=10,font.size=15,border.bottom=30)
+      
+      ledges<-rbind(ledges1,ledges2)
+      
+      
+      
     }else{
-        
-       
-        # passing custom nodes and/or edges
-        lnodes <- data.frame(label =paste(unique(node_vec$type),unique(node_name),sep=""),
-        shape = unique(vis.nodes$shape), color = unique(vis.nodes$color),size=rep(8,length(unique(vis.nodes$shape))),shape.size = rep(50, length(unique(node_name))),font.align="top",font.size=15)
-        
-        
-          ledges <- data.frame(color = c("blue","red"),label = c("-ve correlation", "+ve correlation"), arrows =c("NULL", "NULL"),font.align = "top",font.size=15,border.bottom=30)
-    
-   
+      
+      
+      # passing custom nodes and/or edges
+      lnodes <- data.frame(label =paste(unique(node_vec$type),unique(node_name),sep=""),
+                           shape = unique(vis.nodes$shape), color = unique(vis.nodes$color),size=rep(8,length(unique(vis.nodes$shape))),shape.size = rep(50, length(unique(node_name))),font.align="top",font.size=15)
+      
+      
+      ledges <- data.frame(color = c("blue","red"),label = c("-ve correlation", "+ve correlation"), arrows =c("NULL", "NULL"),font.align = "top",font.size=15,border.bottom=30)
+      
+      
     }
     
     visnet<-visLegend(visnet, position="left", ncol=1,addNodes = lnodes, addEdges = ledges, useGroups = FALSE,main = list(text = "Legend", style = "font-family:Helvetica;color:blue;font-size:14px;text-align:left;"),stepX=100,stepY=100,width=0.125,zoom=TRUE)
     
-   
+    
     visnet<-visOptions(visnet,selectedBy = list(variable=c("type"), multiple=T,style = 'width: 200px; height: 26px;
     background: #f8f8f8;
     color: darkblue'), manipulation = TRUE,highlightNearest =list(hover=TRUE,enabled = T, degree = 1),
-    nodesIdSelection = list(enabled = TRUE, style = 'width: 200px; height: 26px;
+                       nodesIdSelection = list(enabled = TRUE, style = 'width: 200px; height: 26px;
     background: #f8f8f8;
     color: darkblue;
     '))
@@ -215,11 +215,11 @@ function(sg,df_matrix,main_text="Integrative network",Xname="X",Yname="Y",Zname=
     visnet<-visPhysics(visnet,stabilization = FALSE)
     visnet<-visEdges(visnet,smooth = FALSE)
     
-    if(is.na(communitymembership)==TRUE){
-    visSave(visnet, file = "interactive.network.html",selfcontained = html.selfcontained)
+    if(identical(communitymembership, NA)==TRUE){
+      visSave(visnet, file = "interactive.network.html",selfcontained = html.selfcontained)
     }else{
-        visSave(visnet, file = "interactive.network.communities.html",selfcontained = html.selfcontained)
-        
+      visSave(visnet, file = "interactive.network.communities.html",selfcontained = html.selfcontained)
+      
     }
-  return(visnet)
-}
+    return(visnet)
+  }
