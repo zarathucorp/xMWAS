@@ -194,7 +194,7 @@ run_xmwas_child <-
     }
     
     suppressWarnings(
-      if(is.na(classname)==FALSE && is.na(classlabels)==FALSE){
+      if(!identical(classname, NA) && !identical(classlabels, NA)){
         
         rnames_x<-rownames(Xome_data)
         Xome_data<-Xome_data[,which(classlabels_vec==classname),drop=FALSE]
